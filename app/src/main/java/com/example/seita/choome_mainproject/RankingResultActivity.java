@@ -4,11 +4,10 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.example.seita.choome_mainproject.ServerConnectionController.ConnectionCallBack;
+import com.example.seita.choome_mainproject.ServerConnectionController.ConnectionCallBacks.test.ConnectionCallBack;
 import com.example.seita.choome_mainproject.ServerConnectionController.ConnectionHelper;
+import com.example.seita.choome_mainproject.ServerConnectionController.JsonPase;
 import com.example.seita.choome_mainproject.maikeView.CardRecyclerView;
-
-import org.json.JSONObject;
 
 public class RankingResultActivity extends AppCompatActivity {
 
@@ -27,18 +26,19 @@ public class RankingResultActivity extends AppCompatActivity {
 //        CardRecyclerAdapter adapter = new CardRecyclerAdapter();
 //        cardRecyclerView.setRecyclerAdapter();
 
-        connectionHelper.setConnectionCallBack(new ConnectionCallBack() {
+        ConnectionCallBack connectionCallBack = new ConnectionCallBack() {
             @Override
-            public JSONObject receiveJson() {
-                return null;
-            }
-        });
+            public void receiveJson(JsonPase jsonPase) {
 
+            }
+        };
+        connectionHelper.setConnectionCallBack(connectionCallBack);
     }
 
-    //検索のデータを受け取る処理
+    //検索のデータを受け取る処理(仮)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
     }
+
 }

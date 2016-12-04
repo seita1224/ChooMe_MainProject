@@ -105,8 +105,8 @@ public class CardRecyclerAdapter extends RecyclerView.Adapter<CardRecyclerAdapte
                 mBundle.putString("goodsName", (String) vh.mGoodsTextView.getText());
                 mBundle.putString("genres", (String) vh.mGenresTextView.getText());
                 mBundle.putInt("rate", (int) vh.mRateRatingBar.getRating());
-//                Bitmap bmp = (BitmapDrawable) vh.mGoodsImageView.getDrawable();
-//                mBundle.putParcelable("goodsImage", );
+                Bitmap bmp = ((BitmapDrawable) vh.mGoodsImageView.getDrawable()).getBitmap();
+                mBundle.putParcelable("goodsImage",bmp );
                 return mBundle;
         }
 

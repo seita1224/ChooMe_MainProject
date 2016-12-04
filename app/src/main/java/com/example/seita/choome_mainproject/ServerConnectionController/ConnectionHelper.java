@@ -3,6 +3,8 @@ package com.example.seita.choome_mainproject.ServerConnectionController;
 import android.util.Log;
 
 import com.example.seita.choome_mainproject.DBController.*;
+import com.example.seita.choome_mainproject.ServerConnectionController.ConnectionCallBacks.AsyncCallBack;
+import com.example.seita.choome_mainproject.ServerConnectionController.ConnectionCallBacks.test.ConnectionCallBack;
 
 import org.json.JSONObject;
 
@@ -18,16 +20,11 @@ public class ConnectionHelper {
     private SendJsonAsyncTask send = null;  //データ送信用の非同期処理クラス
     private ReceiveJsonAsyncTask receive = null;    //データ受信用の非同期処理クラス
     private URL url = null; //送受信先のURL
-    private JSONObject json;
+    private JsonPase jsonPase;
     private Userdata user;
     private Goodsdata goods;
 
     private ConnectionCallBack connectionCallBack;
-
-    //JSONは帰ってくるが帰ってくるタイミングと合わせるのが難しい
-    public JSONObject jore(){
-        return json;
-    }
 
     //-----------------------------受信-----------------------------
     //ユーザ情報受信
@@ -36,11 +33,11 @@ public class ConnectionHelper {
         receive.setCallBack(new AsyncCallBack() {
             @Override
             public void callBack(JSONObject jo) {
-                json = jo;
+                connectionCallBack.receiveJson(jsonPase);
+                Log.d("ConnectionHelper","CallBack");
             }
         });
         receive.execute();
-        connectionCallBack.receiveJson();
     }
 
     //商品情報受信
@@ -52,8 +49,15 @@ public class ConnectionHelper {
 
     //ランキング情報の受信
     public void reciveRankingTask(){
-        setUrl("");
         receive = new ReceiveJsonAsyncTask(url);
+        receive.setCallBack(new AsyncCallBack() {
+            @Override
+            public void callBack(JSONObject jo) {
+                jsonPase = new JsonPase(jo);
+                connectionCallBack.receiveJson(jsonPase);
+                Log.d("ConnectionHelper","CallBack");
+            }
+        });
         receive.execute();
     }
 
@@ -85,7 +89,7 @@ public class ConnectionHelper {
         setUrl("");
         send = new SendJsonAsyncTask();
         send.execute();
-}
+    }
 
     //送受信用URLにURLをセット
     public void setUrl(String str){

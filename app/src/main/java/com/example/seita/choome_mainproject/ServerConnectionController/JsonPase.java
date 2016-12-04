@@ -3,6 +3,8 @@ package com.example.seita.choome_mainproject.ServerConnectionController;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.example.seita.choome_mainproject.DBController.Goodsdata;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,88 +18,67 @@ import java.util.ArrayList;
 //Jsonデータをパース(解析)するクラス
 public class JsonPase {
     //フィールド
-    private JSONObject jo = null;
-    private JSONArray ja = null;
-    private StringBuilder sb = null;
+    private JSONObject rootJsonObject = null;
+    private JSONArray rootJsonArray = null;
 
     //コンストラクタ
     //デフォルトコンストラクタ
     public JsonPase(){}
 
-    //StringBilder
-    public JsonPase(StringBuilder sb){this.sb = sb;}
+    //JSONObject
+    public JsonPase(JSONObject jo){this.rootJsonObject = jo;}
 
+    //JSONArray
+    public JsonPase(JSONArray ja){this.rootJsonArray = ja;}
 
     //ランキングの文字列を返すメソッド
-    public ArrayList<Object> RankingJson(){
-        //Jsonの情報保存用変数
-        ArrayList<Object> jsonArray = new ArrayList<>();
+    public ArrayList<Goodsdata> RankingJson(){
+        //ランキング格納用ArrayList
+        ArrayList<Goodsdata> rankList = new ArrayList<>();
 
-        //Jsonデータの準備
-        try {
-            //Jsonデータを生成
-            ja = new JSONArray(sb.toString());
+        //一時退避用JSONObject
+        JSONObject tempJo;
 
-            //JSONArrayを格納する
-            for(int i = 0;i < ja.length();i++){
-                jsonArray.add(ja.get(i)); //型の
+        //JSONから順位だけを抜き出す
+        for (int i = 0;i < 20;i++){
+            try {
+                //1～20位まで一つずつ退避させる
+                tempJo = rootJsonObject.getJSONObject(String.valueOf(i + 1));
+
+                //GoodsdataClassに一つずつ入れる
+                Goodsdata data = new Goodsdata();
+
+                data.setGoods_id(tempJo.getInt("getgoods_id"));
+
+                //GoodsdataをrankListに追加
+                rankList.add(data);
+            } catch (JSONException e) {
+                Log.e("JsonPase","ランキングデータの取得に失敗しました");
             }
-        } catch (JSONException e) {
-            Log.e("C:JsonPase,M:Ranking...",e .toString());
         }
-        return jsonArray;
+        return rankList;
     }
 
     //ユーザーデータを返すメソッド
     public String UserJson(){
-        //Userデータの整形開始
-        try {
-            //JSONArrayの形に変える
-            ja = new JSONArray(sb.toString());
-
-            //Jsonデータ格納用にインスタンス生成
-            sb = new StringBuilder();
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
         return null;
     }
 
     //商品のデータを返すメソッド
     public String GoodsJson(){
-        //商品データ格納用StringBilder
-        sb = new StringBuilder();
-
         return null;
     }
 
     //商品の写真を返すメソッド
     public Bitmap PictureData(){
-        //商品写真格納用配列
-        Bitmap bm[] = null;
-        //Bitmap配列をJsonから生成し格納
-        try {
-            for (int i = 0;i < ja.length();i++){
-                bm[i] = (Bitmap) ja.getJSONObject(i).get("picture");
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
         return null;
     }
 
     //JSONObjectのgetter,setter
-    public JSONObject getJo() {return jo;}
-    public void setJo(JSONObject jo) {this.jo = jo;}
+    public JSONObject getJo() {return rootJsonObject;}
+    public void setJo(JSONObject jo) {this.rootJsonObject = jo;}
 
     //JSONArrayのgetter,setter
-    public JSONArray getJa(){return ja;}
-    public void setJa(JSONArray ja){this.ja = ja;}
-
-    //StringBilderのgetter,setter
-    public StringBuilder getSb() {return sb;}
-    public void setSb(StringBuilder sb) {this.sb = sb;}
-
+    public JSONArray getJa(){return rootJsonArray;}
+    public void setJa(JSONArray ja){this.rootJsonArray= ja;}
 }

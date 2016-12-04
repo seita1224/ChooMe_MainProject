@@ -1,4 +1,4 @@
-package com.example.seita.choome_mainproject.ServerConnectionController;
+package com.example.seita.choome_mainproject.ServerConnectionController.ConnectionCallBacks;
 
 import org.json.JSONObject;
 

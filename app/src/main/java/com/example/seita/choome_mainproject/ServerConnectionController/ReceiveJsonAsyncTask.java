@@ -3,6 +3,9 @@ package com.example.seita.choome_mainproject.ServerConnectionController;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.seita.choome_mainproject.ServerConnectionController.ConnectionCallBacks.AsyncCallBack;
+;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
