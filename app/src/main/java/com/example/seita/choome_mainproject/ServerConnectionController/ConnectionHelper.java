@@ -4,12 +4,15 @@ import android.util.Log;
 
 import com.example.seita.choome_mainproject.DBController.*;
 import com.example.seita.choome_mainproject.ServerConnectionController.ConnectionCallBacks.AsyncCallBack;
+import com.example.seita.choome_mainproject.ServerConnectionController.ConnectionCallBacks.main.RankingReceive;
+import com.example.seita.choome_mainproject.ServerConnectionController.ConnectionCallBacks.main.UserReceive;
 import com.example.seita.choome_mainproject.ServerConnectionController.ConnectionCallBacks.test.ConnectionCallBack;
 
 import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * Created by seita on 2016/10/31.
@@ -21,10 +24,12 @@ public class ConnectionHelper {
     private ReceiveJsonAsyncTask receive = null;    //データ受信用の非同期処理クラス
     private URL url = null; //送受信先のURL
     private JsonPase jsonPase;
-    private Userdata user;
-    private Goodsdata goods;
 
-    private ConnectionCallBack connectionCallBack;
+    //ランキングに対応するArrayList
+    ArrayList<Goodsdata> goodsdatas;
+
+    private RankingReceive rankingReceive;
+    private UserReceive userReceive;
 
     //-----------------------------受信-----------------------------
     //ユーザ情報受信
@@ -33,7 +38,7 @@ public class ConnectionHelper {
         receive.setCallBack(new AsyncCallBack() {
             @Override
             public void callBack(JSONObject jo) {
-                connectionCallBack.receiveJson(jsonPase);
+                userReceive.receiveUser();
                 Log.d("ConnectionHelper","CallBack");
             }
         });
@@ -53,9 +58,13 @@ public class ConnectionHelper {
         receive.setCallBack(new AsyncCallBack() {
             @Override
             public void callBack(JSONObject jo) {
-                jsonPase = new JsonPase(jo);
-                connectionCallBack.receiveJson(jsonPase);
-                Log.d("ConnectionHelper","CallBack");
+                JsonPase jp = new JsonPase(jo);
+                if(jp.serectInfo() != "Ranking") {
+                    Log.e("ConnectionHelper","Jsonデータの[Type]が[Ranking]ではありません");
+                }else {
+                    rankingReceive.rankReceive(goodsdatas);
+                    Log.d("ConnectionHelper","CallBack");
+                }
             }
         });
         receive.execute();
@@ -101,7 +110,8 @@ public class ConnectionHelper {
     }
 
     //コールバック処理セットメソッド
-    public void setConnectionCallBack(ConnectionCallBack connectionCallBack){
-        this.connectionCallBack = connectionCallBack;
-    }
+    //ランキング
+    public void setConnectionCallBack(RankingReceive rankingReceive){this.rankingReceive = rankingReceive;}
+    //ユーザー
+    public void setConnectionCallBack(UserReceive userReceive){this.userReceive = userReceive;}
 }

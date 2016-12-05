@@ -20,9 +20,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.example.seita.choome_mainproject.DBController.Goodsdata;
 import com.example.seita.choome_mainproject.ProductReviewActivity;
 import com.example.seita.choome_mainproject.R;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 
@@ -36,12 +38,21 @@ public class CardRecyclerAdapter extends RecyclerView.Adapter<CardRecyclerAdapte
         private Context context;
         double[] rate; //商品の評価
 
+        ArrayList<Goodsdata> goodsdatas;//ランキング格納用ArrayList
+
         public CardRecyclerAdapter(Context context,String[] goodsList,String[] genresList,Bitmap goodsImage) {
                 super();
                 this.goodsList = goodsList;
                 this.genresList = genresList;
                 this.goodsImage = goodsImage;
                 this.context = context;
+        }
+
+        //ランキングコンストラクタ
+        public CardRecyclerAdapter(Context context, ArrayList<Goodsdata> goodsdatas){
+                super();
+                this.context = context;
+                this.goodsdatas = goodsdatas;
         }
 
         @Override
@@ -53,20 +64,19 @@ public class CardRecyclerAdapter extends RecyclerView.Adapter<CardRecyclerAdapte
         @Override
         public void onBindViewHolder(ViewHolder vh, final int position) {
                 //商品名の設定
-                vh.mGoodsTextView.setText(goodsList[position]);
+                vh.mGoodsTextView.setText(goodsdatas.get(position).getGoods_name());
 
                 //ジャンル名設定
-                vh.mGenresTextView.setText(genresList[new Random().nextInt(genresList.length - 1)]);
+                vh.mGenresTextView.setText(goodsdatas.get(position).getGenre());
 
                 //商品画像の設定
-                vh.mGoodsImageView.setImageBitmap(goodsImage);
+                vh.mGoodsImageView.setImageBitmap(goodsdatas.get(position).getPicture());
 
                 //カードビュー自体をクリックしたときの処理
                 vh.mRankingResultRootLayout.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                                Toast.makeText(context,goodsList[position],Toast.LENGTH_SHORT).show();
-                                Log.d("LayoutClick", String.valueOf(position) + " Rate ; " + rate);
+                                Log.d("LayoutClick", String.valueOf(position) + " Rate ; " + goodsdatas.get(position).getRate());
                         }
                 });
 
@@ -77,8 +87,11 @@ public class CardRecyclerAdapter extends RecyclerView.Adapter<CardRecyclerAdapte
                              rate[position] = v;
                         }
                 });
+                //星の数を商品のレートに初期化
+            vh.mRateRatingBar.setRating(goodsdatas.get(position).getRate());
 
                 final Bundle b = setBundle(vh);
+
                 //レビューボタンをクリックしたときの処理
                 vh.mProductReViewButton.setOnClickListener(new View.OnClickListener() {
                         @Override

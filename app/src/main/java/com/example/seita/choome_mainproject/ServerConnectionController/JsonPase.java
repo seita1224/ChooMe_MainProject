@@ -31,19 +31,38 @@ public class JsonPase {
     //JSONArray
     public JsonPase(JSONArray ja){this.rootJsonArray = ja;}
 
+    //JSONのデータを判別するためのメソッド(ランキング、ユーザデータ等)
+    public String serectInfo(){
+        String result = null;
+        try {
+            //ここにデータ種別が増えたときcase文追加
+            switch (rootJsonObject.getString("Type")){
+                case "Ranking"://ランキングデータのとき
+                    return rootJsonObject.getString("Type");
+            }
+        } catch (JSONException e) {
+            Log.d("JsonPase","selectInfoでエラーです");
+        }
+        return result;
+    }
+
+
     //ランキングの文字列を返すメソッド
-    public ArrayList<Goodsdata> RankingJson(){
+    public ArrayList<Goodsdata> getRanking(){
         //ランキング格納用ArrayList
         ArrayList<Goodsdata> rankList = new ArrayList<>();
 
-        //一時退避用JSONObject
+        //一時退避用JSONObject,JSONArray
+        JSONArray tempJa;
         JSONObject tempJo;
 
-        //JSONから順位だけを抜き出す
-        for (int i = 0;i < 20;i++){
-            try {
-                //1～20位まで一つずつ退避させる
-                tempJo = rootJsonObject.getJSONObject(String.valueOf(i + 1));
+        try {
+            //JSONArrayにランキング配列を入れる
+            tempJa = rootJsonObject.getJSONArray("Items");
+
+            //JSONから順位だけを抜き出す
+            for (int i = 0;i < 20;i++){
+                tempJo = tempJa.getJSONObject(i);
 
                 //GoodsdataClassに一つずつ入れる
                 Goodsdata data = new Goodsdata();
@@ -52,10 +71,12 @@ public class JsonPase {
 
                 //GoodsdataをrankListに追加
                 rankList.add(data);
-            } catch (JSONException e) {
-                Log.e("JsonPase","ランキングデータの取得に失敗しました");
             }
+        } catch (JSONException e) {
+            Log.e("JsonPase","ランキングデータの取得に失敗しました");
         }
+
+
         return rankList;
     }
 

@@ -11,7 +11,7 @@ public class Goodsdata{
     //フィールド
     private String goods_name;//商品の名前
     private int goods_id;//商品ID
-    private int valuation;//評価
+    private int rate;//評価
     private Bitmap picture;//画像
     private String comment;//コメント
     private String genre;//ジャンル
@@ -34,8 +34,8 @@ public class Goodsdata{
     public void setGoods_id(int goods_id) {this.goods_id = goods_id;}
 
     //Valuation
-    public int getValuation() {return valuation;}
-    public void setValuation(int valuation) {this.valuation = valuation;}
+    public int getRate() {return rate;}
+    public void setRate(int valuation) {this.rate = rate;}
 
     //picture
     public Bitmap getPicture() {return picture;}
