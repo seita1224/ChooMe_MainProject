@@ -53,11 +53,13 @@ public class CardRecyclerAdapter extends RecyclerView.Adapter<CardRecyclerAdapte
                 super();
                 this.context = context;
                 this.goodsdatas = goodsdatas;
+                Log.d("CardRecycleViewAdapter","コンストラクタ通過");
+                Log.d("CardRecycleViewAdapter", String.valueOf(goodsdatas.size()));
         }
 
         @Override
         public int getItemCount() {
-                return goodsList.length;
+                return goodsdatas.size();
         }
 
         //ViewHolderにあるViewをカードビューにセットする
@@ -87,8 +89,9 @@ public class CardRecyclerAdapter extends RecyclerView.Adapter<CardRecyclerAdapte
                              rate[position] = v;
                         }
                 });
+
                 //星の数を商品のレートに初期化
-            vh.mRateRatingBar.setRating(goodsdatas.get(position).getRate());
+                vh.mRateRatingBar.setRating(goodsdatas.get(position).getRate());
 
                 final Bundle b = setBundle(vh);
 

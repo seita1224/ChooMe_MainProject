@@ -7,5 +7,5 @@ import org.json.JSONObject;
  */
 
 public interface AsyncCallBack {
-    void callBack(JSONObject jo);
+    void asyncCallBack(JSONObject jo);
 }

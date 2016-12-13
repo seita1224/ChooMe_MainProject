@@ -9,5 +9,5 @@ import java.util.ArrayList;
  */
 
 public interface RankingReceive {
-    public void rankReceive(ArrayList<Goodsdata> goodsdatas);
+    public void rankReceive(ArrayList<Goodsdata> goodsdatas,String connectionStatus);
 }

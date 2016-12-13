@@ -2,6 +2,7 @@ package com.example.seita.choome_mainproject.ServerConnectionController;
 
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.seita.choome_mainproject.DBController.Goodsdata;
 
@@ -21,6 +22,7 @@ public class JsonPase {
     private JSONObject rootJsonObject = null;
     private JSONArray rootJsonArray = null;
 
+
     //コンストラクタ
     //デフォルトコンストラクタ
     public JsonPase(){}
@@ -31,19 +33,20 @@ public class JsonPase {
     //JSONArray
     public JsonPase(JSONArray ja){this.rootJsonArray = ja;}
 
-    //JSONのデータを判別するためのメソッド(ランキング、ユーザデータ等)
-    public String serectInfo(){
-        String result = null;
+    //JSONのデータを判別するためのメソッド
+    public boolean serectInfo(String type) {
+        Log.d("JsonParse","serectInfo");
         try {
             //ここにデータ種別が増えたときcase文追加
-            switch (rootJsonObject.getString("Type")){
-                case "Ranking"://ランキングデータのとき
-                    return rootJsonObject.getString("Type");
-            }
+           if(type == rootJsonObject.getString("Type")){
+               return true;
+           }else{
+               return false;
+           }
         } catch (JSONException e) {
-            Log.d("JsonPase","selectInfoでエラーです");
+            Log.e("JsonPase", e.toString());
         }
-        return result;
+        return false;
     }
 
 
@@ -57,26 +60,31 @@ public class JsonPase {
         JSONObject tempJo;
 
         try {
+
+            //取得するデータがあっているかどうか判定
+            serectInfo(rootJsonObject.getString("Type"));
+
             //JSONArrayにランキング配列を入れる
             tempJa = rootJsonObject.getJSONArray("Items");
 
             //JSONから順位だけを抜き出す
             for (int i = 0;i < 20;i++){
-                tempJo = tempJa.getJSONObject(i);
+                tempJo = tempJa.getJSONObject(i).getJSONObject("Item");
+                Log.d("JsonParse", String.valueOf(tempJo.getInt("ranking_no")));
 
                 //GoodsdataClassに一つずつ入れる
                 Goodsdata data = new Goodsdata();
 
                 data.setGoods_id(tempJo.getInt("getgoods_id"));
 
+                //log出力
+                Log.d("JsonParse", String.valueOf(data.getGoods_id()));
                 //GoodsdataをrankListに追加
                 rankList.add(data);
             }
         } catch (JSONException e) {
-            Log.e("JsonPase","ランキングデータの取得に失敗しました");
+            Log.e("JsonPase","ランキングデータの生成に失敗しました : " + e.toString());
         }
-
-
         return rankList;
     }
 
