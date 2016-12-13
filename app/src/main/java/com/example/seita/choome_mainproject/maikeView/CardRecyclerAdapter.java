@@ -36,7 +36,7 @@ public class CardRecyclerAdapter extends RecyclerView.Adapter<CardRecyclerAdapte
         private String[] genresList; //商品のリストに対応するジャンル
         private Bitmap goodsImage; //商品のリストに対応する画像
         private Context context;
-        double[] rate; //商品の評価
+        double rate; //商品の評価
 
         ArrayList<Goodsdata> goodsdatas;//ランキング格納用ArrayList
 
@@ -54,7 +54,6 @@ public class CardRecyclerAdapter extends RecyclerView.Adapter<CardRecyclerAdapte
                 this.context = context;
                 this.goodsdatas = goodsdatas;
                 Log.d("CardRecycleViewAdapter","コンストラクタ通過");
-                Log.d("CardRecycleViewAdapter", String.valueOf(goodsdatas.size()));
         }
 
         @Override
@@ -67,9 +66,11 @@ public class CardRecyclerAdapter extends RecyclerView.Adapter<CardRecyclerAdapte
         public void onBindViewHolder(ViewHolder vh, final int position) {
                 //商品名の設定
                 vh.mGoodsTextView.setText(goodsdatas.get(position).getGoods_name());
+//                Log.d("CardRecycleViewAdapter",goodsdatas.get(position).getGoods_name());
 
                 //ジャンル名設定
                 vh.mGenresTextView.setText(goodsdatas.get(position).getGenre());
+//                vh.mGenresTextView.setText("test");
 
                 //商品画像の設定
                 vh.mGoodsImageView.setImageBitmap(goodsdatas.get(position).getPicture());
@@ -79,14 +80,6 @@ public class CardRecyclerAdapter extends RecyclerView.Adapter<CardRecyclerAdapte
                         @Override
                         public void onClick(View v) {
                                 Log.d("LayoutClick", String.valueOf(position) + " Rate ; " + goodsdatas.get(position).getRate());
-                        }
-                });
-
-                //評価するための星を変えたときの処理
-                vh.mRateRatingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-                        @Override
-                        public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-                             rate[position] = v;
                         }
                 });
 
@@ -101,6 +94,7 @@ public class CardRecyclerAdapter extends RecyclerView.Adapter<CardRecyclerAdapte
                         public void onClick(View view) {
                                 Intent intent = new Intent(context,ProductReviewActivity.class);  //レビュー画面に飛ばす
                                 intent.putExtras(b);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 context.startActivity(intent);
                         }
                 });

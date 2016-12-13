@@ -32,8 +32,9 @@ public class CardRecyclerView extends RecyclerView{
     public void setRecyclerAdapter(Context context,ArrayList<Goodsdata> goodsdatas){
         //カードビューの生成についてのログ
         Log.d("CardRecyclerView","カードビューの生成");
+        Log.d("CardRecyclerView", String.valueOf(goodsdatas.size()));
         setLayoutManager(new LinearLayoutManager(context));
-        setAdapter(new CardRecyclerAdapter(context,goodsList));
+        setAdapter(new CardRecyclerAdapter(context,goodsdatas));
     }
 
 }

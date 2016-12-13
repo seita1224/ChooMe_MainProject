@@ -42,10 +42,10 @@ public class RankingResultActivity extends AppCompatActivity {
         connectionHelper.setConnectionCallBack(new RankingReceive() {
             @Override
             public void rankReceive(ArrayList<Goodsdata> goodsdatas,String connectionStatus) {
-                //エラーの処理
+                Log.d("RankingResultActivity","Load CardView");
+                Log.d("RankingResultActivity", String.valueOf(goodsdatas.size()));
                 cardRecyclerView.setRecyclerAdapter(getApplicationContext(),goodsdatas);
                 setContentView(cardRecyclerView);
-                Log.d("RankingResultActivity","Load CardView");
             }
         });
         //ランキングデータ受信

@@ -70,15 +70,19 @@ public class JsonPase {
             //JSONから順位だけを抜き出す
             for (int i = 0;i < 20;i++){
                 tempJo = tempJa.getJSONObject(i).getJSONObject("Item");
-                Log.d("JsonParse", String.valueOf(tempJo.getInt("ranking_no")));
+
+                //データの確認
+                Log.d("JsonParse", tempJa.getJSONObject(i).getJSONObject("Item").toString());
 
                 //GoodsdataClassに一つずつ入れる
                 Goodsdata data = new Goodsdata();
 
+                //データを一つずつ格納する
                 data.setGoods_id(tempJo.getInt("getgoods_id"));
+                data.setGoods_name(tempJo.getString("name"));
+                data.setGenre(tempJo.getString("genres"));
+                data.setRate(tempJo.getInt("average_rate"));
 
-                //log出力
-                Log.d("JsonParse", String.valueOf(data.getGoods_id()));
                 //GoodsdataをrankListに追加
                 rankList.add(data);
             }
