@@ -44,7 +44,7 @@ public class RankingResultActivity extends AppCompatActivity {
             public void rankReceive(ArrayList<Goodsdata> goodsdatas,String connectionStatus) {
                 Log.d("RankingResultActivity","Load CardView");
                 Log.d("RankingResultActivity", String.valueOf(goodsdatas.size()));
-                cardRecyclerView.setRecyclerAdapter(getApplicationContext(),goodsdatas);
+                cardRecyclerView.setRankingRecyclerAdapter(getApplicationContext(),goodsdatas);
                 setContentView(cardRecyclerView);
             }
         });

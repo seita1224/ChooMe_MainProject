@@ -1,4 +1,4 @@
-package com.example.seita.choome_mainproject.ServerConnectionController;
+package com.example.seita.choome_mainproject.ServerConnectionController.JsonParse;
 
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -10,6 +10,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -17,34 +19,33 @@ import java.util.ArrayList;
  */
 
 //Jsonデータをパース(解析)するクラス
-public class JsonPase {
+public class RankingJsonPase {
     //フィールド
     private JSONObject rootJsonObject = null;
     private JSONArray rootJsonArray = null;
 
-
     //コンストラクタ
     //デフォルトコンストラクタ
-    public JsonPase(){}
+    public RankingJsonPase(){}
 
     //JSONObject
-    public JsonPase(JSONObject jo){this.rootJsonObject = jo;}
+    public RankingJsonPase(JSONObject jo){this.rootJsonObject = jo;}
 
     //JSONArray
-    public JsonPase(JSONArray ja){this.rootJsonArray = ja;}
+    public RankingJsonPase(JSONArray ja){this.rootJsonArray = ja;}
 
     //JSONのデータを判別するためのメソッド
-    public boolean serectInfo(String type) {
-        Log.d("JsonParse","serectInfo");
+    public boolean serectInfo() {
+        Log.d("RankingJsonParse","serectInfo");
         try {
             //ここにデータ種別が増えたときcase文追加
-           if(type == rootJsonObject.getString("Type")){
+           if("Ranking" == rootJsonObject.getString("Type")){
                return true;
            }else{
                return false;
            }
         } catch (JSONException e) {
-            Log.e("JsonPase", e.toString());
+            Log.e("RankingJsonPase", e.toString());
         }
         return false;
     }
@@ -62,7 +63,7 @@ public class JsonPase {
         try {
 
             //取得するデータがあっているかどうか判定
-            serectInfo(rootJsonObject.getString("Type"));
+            serectInfo();
 
             //JSONArrayにランキング配列を入れる
             tempJa = rootJsonObject.getJSONArray("Items");
@@ -81,30 +82,21 @@ public class JsonPase {
                 data.setGoods_id(tempJo.getInt("getgoods_id"));
                 data.setGoods_name(tempJo.getString("name"));
                 data.setGenre(tempJo.getString("genres"));
-                data.setRate(tempJo.getInt("average_rate"));
+                data.setRate(tempJo.getDouble("average_rate"));
+
+                try {
+                    data.setImage(new URL(tempJo.getString("image")));
+                } catch (MalformedURLException e) {
+                    Log.d("JsonParse","URLの変換に失敗しました");
+                }
 
                 //GoodsdataをrankListに追加
                 rankList.add(data);
             }
         } catch (JSONException e) {
-            Log.e("JsonPase","ランキングデータの生成に失敗しました : " + e.toString());
+            Log.e("RankingJsonPase","ランキングデータの生成に失敗しました : " + e.toString());
         }
         return rankList;
-    }
-
-    //ユーザーデータを返すメソッド
-    public String UserJson(){
-        return null;
-    }
-
-    //商品のデータを返すメソッド
-    public String GoodsJson(){
-        return null;
-    }
-
-    //商品の写真を返すメソッド
-    public Bitmap PictureData(){
-        return null;
     }
 
     //JSONObjectのgetter,setter

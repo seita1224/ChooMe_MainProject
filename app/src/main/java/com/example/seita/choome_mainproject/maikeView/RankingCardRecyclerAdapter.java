@@ -3,21 +3,16 @@ package com.example.seita.choome_mainproject.maikeView;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.example.seita.choome_mainproject.DBController.Goodsdata;
@@ -25,22 +20,21 @@ import com.example.seita.choome_mainproject.ProductReviewActivity;
 import com.example.seita.choome_mainproject.R;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 
 /**
  * Created by yuki on 2016/05/26.
  */
-public class CardRecyclerAdapter extends RecyclerView.Adapter<CardRecyclerAdapter.ViewHolder>{
+public class RankingCardRecyclerAdapter extends RecyclerView.Adapter<RankingCardRecyclerAdapter.ViewHolder>{
         private String[] goodsList; //商品名リスト
         private String[] genresList; //商品のリストに対応するジャンル
         private Bitmap goodsImage; //商品のリストに対応する画像
         private Context context;
-        double rate; //商品の評価
+        private double rate; //商品の評価
 
         ArrayList<Goodsdata> goodsdatas;//ランキング格納用ArrayList
 
-        public CardRecyclerAdapter(Context context,String[] goodsList,String[] genresList,Bitmap goodsImage) {
+        public RankingCardRecyclerAdapter(Context context, String[] goodsList, String[] genresList, Bitmap goodsImage) {
                 super();
                 this.goodsList = goodsList;
                 this.genresList = genresList;
@@ -49,7 +43,7 @@ public class CardRecyclerAdapter extends RecyclerView.Adapter<CardRecyclerAdapte
         }
 
         //ランキングコンストラクタ
-        public CardRecyclerAdapter(Context context, ArrayList<Goodsdata> goodsdatas){
+        public RankingCardRecyclerAdapter(Context context, ArrayList<Goodsdata> goodsdatas){
                 super();
                 this.context = context;
                 this.goodsdatas = goodsdatas;
@@ -63,7 +57,7 @@ public class CardRecyclerAdapter extends RecyclerView.Adapter<CardRecyclerAdapte
 
         //ViewHolderにあるViewをカードビューにセットする
         @Override
-        public void onBindViewHolder(ViewHolder vh, final int position) {
+        public void onBindViewHolder(final ViewHolder vh, final int position) {
                 //商品名の設定
                 vh.mGoodsTextView.setText(goodsdatas.get(position).getGoods_name());
 //                Log.d("CardRecycleViewAdapter",goodsdatas.get(position).getGoods_name());
@@ -74,6 +68,7 @@ public class CardRecyclerAdapter extends RecyclerView.Adapter<CardRecyclerAdapte
 
                 //商品画像の設定
                 vh.mGoodsImageView.setImageBitmap(goodsdatas.get(position).getPicture());
+                goodsImage = goodsdatas.get(position).getPicture();
 
                 //カードビュー自体をクリックしたときの処理
                 vh.mRankingResultRootLayout.setOnClickListener(new View.OnClickListener() {
@@ -84,16 +79,17 @@ public class CardRecyclerAdapter extends RecyclerView.Adapter<CardRecyclerAdapte
                 });
 
                 //星の数を商品のレートに初期化
-                vh.mRateRatingBar.setRating(goodsdatas.get(position).getRate());
+//                vh.mRateRatingBar.setRating(((float) goodsdatas.get(position).getRate()));
+                vh.mRateRatingBar.setRating((float) 4.2);
 
-                final Bundle b = setBundle(vh);
 
                 //レビューボタンをクリックしたときの処理
                 vh.mProductReViewButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                                 Intent intent = new Intent(context,ProductReviewActivity.class);  //レビュー画面に飛ばす
-                                intent.putExtras(b);
+                                //Bundleに画像データは入れない入れるとアプリ自体が再起動するため
+                                intent.putExtras(makeBundle(vh));
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 context.startActivity(intent);
                         }
@@ -102,7 +98,7 @@ public class CardRecyclerAdapter extends RecyclerView.Adapter<CardRecyclerAdapte
 
 
         @Override
-        public CardRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public RankingCardRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
                 View v = layoutInflater.inflate(R.layout.layout_recycler, parent, false);
                 ViewHolder viewHolder = new ViewHolder(v);
@@ -110,13 +106,13 @@ public class CardRecyclerAdapter extends RecyclerView.Adapter<CardRecyclerAdapte
         }
 
         //今あるデータのBundleを生成
-        public Bundle setBundle(ViewHolder vh){
+        public Bundle makeBundle(ViewHolder vh){
                 Bundle mBundle = new Bundle();
                 mBundle.putString("goodsName", (String) vh.mGoodsTextView.getText());
                 mBundle.putString("genres", (String) vh.mGenresTextView.getText());
                 mBundle.putInt("rate", (int) vh.mRateRatingBar.getRating());
-                Bitmap bmp = ((BitmapDrawable) vh.mGoodsImageView.getDrawable()).getBitmap();
-                mBundle.putParcelable("goodsImage",bmp );
+//                Bitmap bmp = ((BitmapDrawable) vh.mGoodsImageView.getDrawable()).getBitmap();
+//                mBundle.putParcelable("goodsImage",bmp);
                 return mBundle;
         }
 

@@ -1,5 +1,6 @@
 package com.example.seita.choome_mainproject.ServerConnectionController;
 
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -114,6 +115,7 @@ public class ReceiveJsonAsyncTask extends AsyncTask<Void,Void,JSONObject> {
         //コールバック先呼出
         asyncCallBack.asyncCallBack(jo);
     }
+
 
     //通信状況確認用コードの取得用メソッド
     public int getStatusCode(){return statusCode;}

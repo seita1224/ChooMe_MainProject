@@ -1,6 +1,16 @@
 package com.example.seita.choome_mainproject.DBController;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Picture;
+import android.util.Log;
+
+import com.example.seita.choome_mainproject.ServerConnectionController.ConnectionCallBacks.main.ImageReceive;
+import com.example.seita.choome_mainproject.ServerConnectionController.ReceiveImageAsyncTask;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 /**
  * Created by seita_v on 2016/10/21.
@@ -11,19 +21,15 @@ public class Goodsdata{
     //フィールド
     private String goods_name;//商品の名前
     private int goods_id;//商品ID
-    private int rate;//評価
+    private double rate;//評価
     private Bitmap picture;//画像
     private String comment;//コメント
     private String genre;//ジャンル
     private String scene;//シーン
     private String hobbies;//趣味
-    private String token;//トークン情報
-
 
     //コンストラクタ
-    public Goodsdata(){
-
-    }
+    public Goodsdata(){}
 
     //goods_name
     public String getGoods_name() {return goods_name;}
@@ -33,9 +39,9 @@ public class Goodsdata{
     public int getGoods_id() {return goods_id;}
     public void setGoods_id(int goods_id) {this.goods_id = goods_id;}
 
-    //Valuation
-    public int getRate() {return rate;}
-    public void setRate(int valuation) {this.rate = rate;}
+    //rate
+    public double getRate() {return rate;}
+    public void setRate(double rate) {this.rate = rate;}
 
     //picture
     public Bitmap getPicture() {return picture;}
@@ -56,6 +62,19 @@ public class Goodsdata{
     //getHobby
     public String getHobbies() {return hobbies;}
     public void setHobbies(String hobbies) {this.hobbies = hobbies;}
+
+    //イメージファイルのURLをセットしダウンロードしてくる
+    public void setImage(URL url){
+        Log.d("Goodsdata","画像データの取得");
+        ReceiveImageAsyncTask receiveImageAsyncTask = new ReceiveImageAsyncTask(url);
+        receiveImageAsyncTask.setImageReceive(new ImageReceive() {
+            @Override
+            public void receiveImage(Bitmap bm) {
+                picture = bm;
+            }
+        });
+        receiveImageAsyncTask.execute();
+    }
 
 
 //    public void paseData() {
