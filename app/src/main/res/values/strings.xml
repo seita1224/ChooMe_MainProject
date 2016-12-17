@@ -1,18 +1,73 @@
 <resources>
     <string name="app_name">ChooMe_MainProject</string>
 
-    <string-array name="genresE">
+
+    <string-array name="list_age">
+        <item>年齢を選択</item>
+        <item>10歳未満</item>
+        <item>10代前半</item>
+        <item>10代後半</item>
+        <item>20代前半</item>
+        <item>20代後半</item>
+        <item>30代前半</item>
+        <item>30代後半</item>
+        <item>40代前半</item>
+        <item>40代後半</item>
+        <item>50代</item>
+        <item>60代</item>
+        <item>70歳以上</item>
+    </string-array>
+
+    <string-array name="list_scene">
+        <item>あげるシーンまたはもらうシーンを選択</item>
+        <item>誕生日</item>
+        <item>結婚記念日</item>
+        <item>クリスマス</item>
+        <item>出産祝い</item>
+        <item>結婚祝い</item>
+        <item>手土産</item>
+        <item>引っ越し</item>
+        <item>お中元＆お歳暮</item>
+        <item>父の日</item>
+        <item>母の日</item>
+        <item>敬老の日</item>
+        <item>卒業＆就職祝い</item>
+        <item>入学祝い</item>
+    </string-array>
+
+    <string-array name="list_genre">
+        <item>プレゼントのジャンルを選択</item>
         <item>本</item>
-        <item>DVD・音楽・ゲーム</item>>
+        <item>DVD・音楽・ゲーム</item>
         <item>家電・カメラ・AV機器</item>
         <item>パソコン・オフィス用品</item>
-        <item>ホーム・キッチン・DIY</item>
+        <item>ホーム＆キッチン・DIY</item>
         <item>食品・飲料・お酒</item>
-　　　  <item>ドラッグ・ビューティ</item>
+        <item>ドラッグ・ビューティ</item>
         <item>ベビー・おもちゃ</item>
         <item>服・シューズ・バッグ・腕時計</item>
-        <item>スポーツ・アウトドア</item>
-        <item>車・バイク</item>
+        <item>スポーツ＆アウトドア</item>
+        <item>車＆バイク</item>
+    </string-array>
+
+    <string-array name="list_hobbies">
+        <item>相手またはあなたの趣味を選択</item>
+        <item>スポーツ</item>
+        <item>読書</item>
+        <item>PC</item>
+        <item>旅行</item>
+        <item>音楽</item>
+        <item>映画鑑賞</item>
+        <item>車＆バイク</item>
+        <item>ゲーム</item>
+        <item>料理</item>
+        <item>お酒</item>
+        <item>ショッピング</item>
+        <item>手芸＆裁縫</item>
+        <item>グルメ</item>
+        <item>ガーデニング</item>
+        <item>アイドル</item>
+        <item>その他</item>
     </string-array>
 
     <string name="title_activity_main">MainActivity</string>

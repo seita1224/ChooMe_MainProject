@@ -11,9 +11,7 @@ import com.example.seita.choome_mainproject.ServerConnectionController.Connectio
 import com.example.seita.choome_mainproject.ServerConnectionController.ConnectionHelper;
 import com.example.seita.choome_mainproject.maikeView.CardRecyclerView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.zip.Inflater;
 
 public class RankingResultActivity extends AppCompatActivity {
 
@@ -23,15 +21,29 @@ public class RankingResultActivity extends AppCompatActivity {
     ConnectionHelper connectionHelper = null;
 
     ArrayList<Goodsdata> goodsList = null;
+
+    String age,sex,scene,genre,hobbie,goodstype;
+
+    Intent intent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ranking_activity);
+        setContentView(R.layout.activity_ranking_result);
 
         Log.d("RankingResultActivity","Load RankingActivity");
 
         //ランキングアクティビティのレイアウトを保存
         layout = new LinearLayout(this);
+
+        intent = getIntent();
+
+        sex = intent.getStringExtra("sex");
+        age = intent.getStringExtra("age");
+        scene = intent.getStringExtra("scene");
+        genre = intent.getStringExtra("genre");
+        hobbie = intent.getStringExtra("hobbie");
+        goodstype = intent.getStringExtra("goodstype");
+
 
         //カードレイアウトの準備
         cardRecyclerView = new CardRecyclerView(getApplicationContext());
@@ -43,18 +55,12 @@ public class RankingResultActivity extends AppCompatActivity {
             @Override
             public void rankReceive(ArrayList<Goodsdata> goodsdatas,String connectionStatus) {
                 Log.d("RankingResultActivity","Load CardView");
-                Log.d("RankingResultActivity", String.valueOf(goodsdatas.size()));
                 cardRecyclerView.setRankingRecyclerAdapter(getApplicationContext(),goodsdatas);
+                cardRecyclerView.setBackgroundResource(R.drawable.haikeiii);
                 setContentView(cardRecyclerView);
             }
         });
         //ランキングデータ受信
-        connectionHelper.reciveRanking();
-    }
-
-    //検索のデータを受け取る処理(仮)
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        connectionHelper.reciveRanking(age,sex,scene,genre,hobbie,goodstype);
     }
 }

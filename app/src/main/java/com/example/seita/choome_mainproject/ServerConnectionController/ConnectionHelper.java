@@ -29,6 +29,11 @@ public class ConnectionHelper {
     private int statusCode;
     private Context context;
 
+    //URL生成用
+    final private String DOMEIN = "http://choome.itsemi.net/";
+    final private String API_VERSION = "api/1.0/";
+    final private String API_CODE = "&key=pcdEhBroxNohtmKoek8iE34hQ6FZYbp";
+
     //ランキングに対応するArrayList
     ArrayList<Goodsdata> goodsdatas;
 
@@ -58,23 +63,25 @@ public class ConnectionHelper {
 
     //商品情報受信
     public void receiveGoods(){
-        setUrl("");
         receive = new ReceiveJsonAsyncTask(url);
         receive.execute();
     }
 
     //ランキング情報の受信
-    public void reciveRanking(){
+    public void reciveRanking(String age,String sex,String scene,String genre,String hobbie,String goodstype){
         Log.d("ConnectionHelper","reciveRanking_");
-        setUrl("http://choome.itsemi.net/api/1.0/ranking/?pattern=2&goodstype=1&key=pcdEhBroxNohtmKoek8iE34hQ6FZYbp");
+
+        setUrl("ranking/?",age,sex,scene,genre,hobbie,goodstype);
+
         receive = new ReceiveJsonAsyncTask(url);
         receive.setCallBack(new AsyncCallBack() {
             @Override
             public void asyncCallBack(JSONObject jo) {
-                checkError();
-                RankingJsonPase jp = new RankingJsonPase(jo);
-                goodsdatas = jp.getRanking();
-                rankingReceive.rankReceive(goodsdatas,connectionStatus);
+                if (checkError()) {
+                    RankingJsonPase jp = new RankingJsonPase(jo);
+                    goodsdatas = jp.getRanking();
+                    rankingReceive.rankReceive(goodsdatas, connectionStatus);
+                }
             }
         });
 
@@ -84,7 +91,6 @@ public class ConnectionHelper {
 
     //レビュー情報の受信
     public void receiveReview(){
-        setUrl("");
         receive = new ReceiveJsonAsyncTask(url);
         receive.execute();
     }
@@ -92,23 +98,49 @@ public class ConnectionHelper {
     //-----------------------------送信-----------------------------
     //ユーザ情報送信
     public void sendUserTask(){
-        setUrl("");
         send = new SendJsonAsyncTask();
         send.execute();
     }
 
     //商品情報送信
     public void sendGoods(){
-        setUrl("");
         send = new SendJsonAsyncTask();
         send.execute();
     }
 
     //ランキング情報の送信
     public void sendRankingTask(){
-        setUrl("");
         send = new SendJsonAsyncTask();
         send.execute();
+    }
+
+    //送受信用URLにURLをセット
+    public void setUrl(String informationType,String age,String sex,String scene,String genre,String hobbie,String goodstype){
+        try {
+            url = new URL(DOMEIN +
+                    API_VERSION +
+                    informationType +
+                    "age=" + age +
+                    "&sex=" + sex +
+                    "&scene=" + scene +
+                    "&genre=" + genre +
+                    "&hobbie=" + hobbie +
+                    "&goodstype=" + goodstype+
+                    API_CODE);
+
+            Log.d("URL",DOMEIN +
+                    API_VERSION +
+                    informationType +
+                    "age=" + age +
+                    "&sex=" + sex +
+                    "&scene=" + scene +
+                    "&genre=" + genre +
+                    "&hobbie=" + hobbie +
+                    "&goodstype=" + goodstype+
+                    API_CODE);
+        } catch (MalformedURLException e) {
+            Log.e("ConnectionHelper",e.toString());
+        }
     }
 
     //送受信用URLにURLをセット
@@ -127,7 +159,7 @@ public class ConnectionHelper {
     public void setConnectionCallBack(UserReceive userReceive){this.userReceive = userReceive;}
 
     //エラー処理用メソッド
-    public void checkError(){
+    public boolean checkError(){
         statusCode = receive.getStatusCode();
         //エラーコードが設定されている場合
         switch (receive.getStatusCode()){
@@ -138,11 +170,12 @@ public class ConnectionHelper {
             case 002:
                 connectionStatus = receive.getConnectionStatus();
                 Log.e("ConnectionHelper",connectionStatus);
-                return;
+                return false;
             case 003:
                 connectionStatus = receive.getConnectionStatus();
                 Log.e("ConnectionHelper",connectionStatus);
-                return;
+                return false;
         }
+        return true;
     }
 }

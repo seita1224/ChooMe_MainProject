@@ -3,6 +3,8 @@ package com.example.seita.choome_mainproject.maikeView;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,10 +18,10 @@ import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.example.seita.choome_mainproject.DBController.Goodsdata;
-import com.example.seita.choome_mainproject.ProductReviewActivity;
 import com.example.seita.choome_mainproject.R;
 
 import java.util.ArrayList;
+
 
 
 /**
@@ -58,6 +60,17 @@ public class RankingCardRecyclerAdapter extends RecyclerView.Adapter<RankingCard
         //ViewHolderにあるViewをカードビューにセットする
         @Override
         public void onBindViewHolder(final ViewHolder vh, final int position) {
+
+                int ranking_no = goodsdatas.get(position).getRanking_no();
+                //ランキング表示
+                vh.mRankingNoTextView.setText(String.valueOf(ranking_no));
+                vh.mRankingNoTextView.bringToFront();
+                if(ranking_no  < 3){
+                        vh.mRankingNoTextView.setTextColor(Color.GREEN);
+                }else if(ranking_no == 3){
+                        vh.mRankingNoTextView.setTextColor(Color.parseColor("#C0C0C0"));
+                }
+
                 //商品名の設定
                 vh.mGoodsTextView.setText(goodsdatas.get(position).getGoods_name());
 //                Log.d("CardRecycleViewAdapter",goodsdatas.get(position).getGoods_name());
@@ -79,23 +92,24 @@ public class RankingCardRecyclerAdapter extends RecyclerView.Adapter<RankingCard
                 });
 
                 //星の数を商品のレートに初期化
-//                vh.mRateRatingBar.setRating(((float) goodsdatas.get(position).getRate()));
-                vh.mRateRatingBar.setRating((float) 4.2);
+                vh.mRateRatingBar.setRating(((float) goodsdatas.get(position).getRate()));
+//                vh.mRateRatingBar.setRating((float) 3);
 
 
                 //レビューボタンをクリックしたときの処理
-                vh.mProductReViewButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                                Intent intent = new Intent(context,ProductReviewActivity.class);  //レビュー画面に飛ばす
-                                //Bundleに画像データは入れない入れるとアプリ自体が再起動するため
-                                intent.putExtras(makeBundle(vh));
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                context.startActivity(intent);
-                        }
-                });
-        }
+//                vh.mProductReViewButton.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                                Intent intent = new Intent(context,ProductReviewActivity.class);  //レビュー画面に飛ばす
+//                                //Bundleに画像データは入れない入れるとアプリ自体が再起動するため
+//                                intent.putExtras(makeBundle(vh));
+//                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                context.startActivity(intent);
+//                        }
+//                });
 
+
+        }
 
         @Override
         public RankingCardRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -111,12 +125,13 @@ public class RankingCardRecyclerAdapter extends RecyclerView.Adapter<RankingCard
                 mBundle.putString("goodsName", (String) vh.mGoodsTextView.getText());
                 mBundle.putString("genres", (String) vh.mGenresTextView.getText());
                 mBundle.putInt("rate", (int) vh.mRateRatingBar.getRating());
-//                Bitmap bmp = ((BitmapDrawable) vh.mGoodsImageView.getDrawable()).getBitmap();
-//                mBundle.putParcelable("goodsImage",bmp);
+                Bitmap bmp = ((BitmapDrawable) vh.mGoodsImageView.getDrawable()).getBitmap();
+                mBundle.putParcelable("goodsImage",bmp);
                 return mBundle;
         }
 
         static class ViewHolder extends RecyclerView.ViewHolder {
+                TextView mRankingNoTextView;
                 TextView mGoodsTextView;
                 TextView mGenresTextView;
                 LinearLayout mRankingResultRootLayout;
@@ -126,6 +141,7 @@ public class RankingCardRecyclerAdapter extends RecyclerView.Adapter<RankingCard
 
                 public ViewHolder(View v) {
                         super(v);
+                        mRankingNoTextView = (TextView)v.findViewById(R.id.rankingNoTextView);
                         mGoodsTextView = (TextView)v.findViewById(R.id.goodsTextView);
                         mGenresTextView = (TextView)v.findViewById(R.id.genresTextView);
                         mRankingResultRootLayout = (LinearLayout)v.findViewById(R.id.rankingResultrootLayout);

@@ -1,6 +1,7 @@
 package com.example.seita.choome_mainproject.maikeView;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -24,6 +25,11 @@ public class CardRecyclerView extends RecyclerView{
     //ランキング用ArrayList
     ArrayList<Goodsdata> goodsList = null;
 
+    @Override
+    public void setBackgroundResource(int resid) {
+        super.setBackgroundResource(resid);
+    }
+
     //アダプターのセット用メソッド
     public void setRankingRecyclerAdapter(Context context,ArrayList<Goodsdata> goodsdatas){
         //カードビューの生成についてのログ
@@ -32,5 +38,4 @@ public class CardRecyclerView extends RecyclerView{
         setLayoutManager(new LinearLayoutManager(context));
         setAdapter(new RankingCardRecyclerAdapter(context,goodsdatas));
     }
-
 }

@@ -19,6 +19,7 @@ import java.net.URL;
 //商品情報を扱うクラス
 public class Goodsdata{
     //フィールド
+    private int ranking_no;//順位
     private String goods_name;//商品の名前
     private int goods_id;//商品ID
     private double rate;//評価
@@ -30,6 +31,10 @@ public class Goodsdata{
 
     //コンストラクタ
     public Goodsdata(){}
+
+    //ranking_no
+    public int getRanking_no() {return ranking_no;}
+    public void setRanking_no(int ranking_no) {this.ranking_no = ranking_no;}
 
     //goods_name
     public String getGoods_name() {return goods_name;}
@@ -75,6 +80,8 @@ public class Goodsdata{
         });
         receiveImageAsyncTask.execute();
     }
+
+
 
 
 //    public void paseData() {

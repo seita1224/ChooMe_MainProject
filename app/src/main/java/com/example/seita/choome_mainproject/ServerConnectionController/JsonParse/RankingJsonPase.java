@@ -79,6 +79,7 @@ public class RankingJsonPase {
                 Goodsdata data = new Goodsdata();
 
                 //データを一つずつ格納する
+                data.setRanking_no(tempJo.getInt("ranking_no"));
                 data.setGoods_id(tempJo.getInt("getgoods_id"));
                 data.setGoods_name(tempJo.getString("name"));
                 data.setGenre(tempJo.getString("genres"));
