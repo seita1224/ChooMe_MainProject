@@ -38,7 +38,8 @@
     <string-array name="list_genre">
         <item>プレゼントのジャンルを選択</item>
         <item>本</item>
-        <item>DVD・音楽・ゲーム</item>
+        <item>DVD・音楽</item>
+        <item>ゲーム</item>
         <item>家電・カメラ・AV機器</item>
         <item>パソコン・オフィス用品</item>
         <item>ホーム＆キッチン・DIY</item>
@@ -68,6 +69,27 @@
         <item>ガーデニング</item>
         <item>アイドル</item>
         <item>その他</item>
+    </string-array>
+
+    <string-array name="list_ranking">
+        <item>性別のみ</item>
+        <item>年代のみ</item>
+        <item>趣味のみ</item>
+        <item>シーンのみ</item>
+        <item>ジャンルのみ</item>
+
+        <item>性別×年代</item>
+        <item>性別×誕生日</item>
+        <item>性別×クリスマス</item>
+        <item>性別×ジャンル</item>
+
+        <item>年代×誕生日</item>
+        <item>年代×クリスマス</item>
+
+        <item>性別×年代×誕生日</item>
+        <item>性別×年代×クリスマス</item>
+
+        <item>性別×年代×ジャンル</item>
     </string-array>
 
     <string name="title_activity_main">MainActivity</string>

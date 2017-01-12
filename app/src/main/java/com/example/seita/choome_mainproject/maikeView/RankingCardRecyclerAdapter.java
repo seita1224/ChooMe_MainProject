@@ -3,6 +3,7 @@ package com.example.seita.choome_mainproject.maikeView;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -18,10 +19,13 @@ import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.example.seita.choome_mainproject.DBController.Goodsdata;
+import com.example.seita.choome_mainproject.ProductReviewActivity;
 import com.example.seita.choome_mainproject.R;
 
 import java.util.ArrayList;
 
+import static android.graphics.Color.BLACK;
+import static android.graphics.Color.rgb;
 
 
 /**
@@ -65,11 +69,18 @@ public class RankingCardRecyclerAdapter extends RecyclerView.Adapter<RankingCard
                 //ランキング表示
                 vh.mRankingNoTextView.setText(String.valueOf(ranking_no));
                 vh.mRankingNoTextView.bringToFront();
-                if(ranking_no  < 3){
-                        vh.mRankingNoTextView.setTextColor(Color.GREEN);
-                }else if(ranking_no == 3){
-                        vh.mRankingNoTextView.setTextColor(Color.parseColor("#C0C0C0"));
+                if(ranking_no == 3){
+                        vh.mRankingNoTextView.setTextColor(rgb(205,127,50));
+                }else if(ranking_no == 2){
+                        vh.mRankingNoTextView.setTextColor(rgb(192,192,192));
+                }else if(ranking_no == 1) {
+                        vh.mRankingNoTextView.setTextColor(BLACK);
+                        vh.mRankingNoTextView.setBackground(context.getResources().getDrawable(R.drawable.oukan));
+                }else{
+                     vh. mRankingNoTextView.setTextColor(Color.GREEN);
                 }
+
+                Log.d("RankingCardAdapter", String.valueOf(ranking_no));
 
                 //商品名の設定
                 vh.mGoodsTextView.setText(goodsdatas.get(position).getGoods_name());
@@ -96,17 +107,17 @@ public class RankingCardRecyclerAdapter extends RecyclerView.Adapter<RankingCard
 //                vh.mRateRatingBar.setRating((float) 3);
 
 
-                //レビューボタンをクリックしたときの処理
-//                vh.mProductReViewButton.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                                Intent intent = new Intent(context,ProductReviewActivity.class);  //レビュー画面に飛ばす
-//                                //Bundleに画像データは入れない入れるとアプリ自体が再起動するため
-//                                intent.putExtras(makeBundle(vh));
-//                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                                context.startActivity(intent);
-//                        }
-//                });
+//                レビューボタンをクリックしたときの処理
+                vh.mProductReViewButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                                Intent intent = new Intent(context,ProductReviewActivity.class);  //レビュー画面に飛ばす
+                                //Bundleに画像データは入れない入れるとアプリ自体が再起動するため
+                                intent.putExtras(makeBundle(vh));
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                context.startActivity(intent);
+                        }
+                });
 
 
         }

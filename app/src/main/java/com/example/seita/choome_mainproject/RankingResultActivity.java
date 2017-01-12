@@ -1,5 +1,9 @@
 package com.example.seita.choome_mainproject;
 
+/*
+ランキング結果表示
+ */
+
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,8 +39,8 @@ public class RankingResultActivity extends AppCompatActivity {
         //ランキングアクティビティのレイアウトを保存
         layout = new LinearLayout(this);
 
+        //ランキング選択用変数取得
         intent = getIntent();
-
         sex = intent.getStringExtra("sex");
         age = intent.getStringExtra("age");
         scene = intent.getStringExtra("scene");
@@ -44,12 +48,16 @@ public class RankingResultActivity extends AppCompatActivity {
         hobbie = intent.getStringExtra("hobbie");
         goodstype = intent.getStringExtra("goodstype");
 
+//        sex = "1";
+//        age = "3";
+//        goodstype = "1";
 
         //カードレイアウトの準備
         cardRecyclerView = new CardRecyclerView(getApplicationContext());
 
         //サーバからデータのダウンロードの準備
         connectionHelper = new ConnectionHelper(getApplicationContext());
+
         //データのダウンロード&ArrayListに格納&カードビューにセットの処理を
         connectionHelper.setConnectionCallBack(new RankingReceive() {
             @Override

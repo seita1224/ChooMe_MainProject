@@ -22,9 +22,16 @@
         android:layout_marginBottom="20dp"
         android:gravity="center">
 
-
-        //ここにタブを追加（ホーム,ランキング,商品一覧,マイページ）
-
+        <!--<TextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text=""-->
+            <!--android:gravity="center"/>-->
+        <!---->
+        <!--<android.support.v7.widget.AppCompatSpinner-->
+            <!--android:id="@+id/rankingSpinner"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content" />-->
 
         <TextView
             android:layout_width="wrap_content"
@@ -36,13 +43,16 @@
             android:textSize="20sp"
             android:layout_weight="0.04"
             android:textAlignment="center"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:textColor="@color/bootstrap_gray_light"
+            android:enabled="false"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="検索したいプレゼントの種類を選択"
             android:gravity="center"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -82,21 +92,31 @@
             android:layout_gravity="center">
 
             <RadioButton
+                android:text="性別の選択をしない"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/raidiobutton_no"
+                android:layout_weight="0.3"
+                android:layout_gravity="center"/>
+
+            <RadioButton
                 android:text="男性"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/raidiobutton_man"
-                android:layout_weight="0.5"
+                android:layout_weight="0.3"
                 android:textSize="30sp"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:enabled="true"/>
 
             <RadioButton
                 android:text="女性"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/raidiobutton_woman"
-                android:layout_weight="0.5"
-                android:textSize="30sp"/>
+                android:layout_weight="0.3"
+                android:textSize="30sp"
+                android:enabled="true"/>
         </RadioGroup>
 
         <android.support.v7.widget.AppCompatSpinner
@@ -105,7 +125,7 @@
             android:id="@+id/Agespinner"
             android:layout_marginTop="20dp"
             android:entries="@array/list_age"
-            android:spinnerMode="dropdown" />
+            android:spinnerMode="dialog" />
 
 
         <android.support.v7.widget.AppCompatSpinner
@@ -114,7 +134,7 @@
             android:id="@+id/Scenespinner"
             android:layout_marginTop="20dp"
             android:entries="@array/list_scene"
-            android:spinnerMode="dropdown" />
+            android:spinnerMode="dialog" />
 
         <android.support.v7.widget.AppCompatSpinner
             android:layout_width="match_parent"
@@ -122,7 +142,7 @@
             android:id="@+id/Genrespinner"
             android:layout_marginTop="20dp"
             android:entries="@array/list_genre"
-            android:spinnerMode="dropdown" />
+            android:spinnerMode="dialog" />
 
         <android.support.v7.widget.AppCompatSpinner
             android:layout_width="match_parent"
@@ -130,7 +150,7 @@
             android:id="@+id/Hobbiesspinner"
             android:layout_marginTop="20dp"
             android:entries="@array/list_hobbies"
-            android:spinnerMode="dropdown" />
+            android:spinnerMode="dialog" />
 
         <com.beardedhen.androidbootstrap.BootstrapButton
             android:text="検索"
@@ -139,8 +159,7 @@
             android:id="@+id/Searchbutton"
             android:layout_marginTop="20dp"
             app:bootstrapBrand="success"
-            app:roundedCorners="true"
-            />
+            app:roundedCorners="true"/>
 
     </LinearLayout>
 
