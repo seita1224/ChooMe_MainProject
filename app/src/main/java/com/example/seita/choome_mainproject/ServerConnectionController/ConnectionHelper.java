@@ -81,6 +81,8 @@ public class ConnectionHelper {
                     RankingJsonPase jp = new RankingJsonPase(jo);
                     goodsdatas = jp.getRanking();
                     rankingReceive.rankReceive(goodsdatas, connectionStatus);
+                }else{
+                    Log.d("ConnectuonHelper","通信処理に失敗しました");
                 }
             }
         });

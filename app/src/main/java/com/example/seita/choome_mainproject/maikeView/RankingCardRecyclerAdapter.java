@@ -26,6 +26,7 @@ import java.util.ArrayList;
 
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.rgb;
+import static com.example.seita.choome_mainproject.R.styleable.BootstrapButton;
 
 
 /**
@@ -74,8 +75,8 @@ public class RankingCardRecyclerAdapter extends RecyclerView.Adapter<RankingCard
                 }else if(ranking_no == 2){
                         vh.mRankingNoTextView.setTextColor(rgb(192,192,192));
                 }else if(ranking_no == 1) {
-                        vh.mRankingNoTextView.setTextColor(BLACK);
-                        vh.mRankingNoTextView.setBackground(context.getResources().getDrawable(R.drawable.oukan));
+                      vh.mRankingNoTextView.setTextColor(BLACK);
+                        //vh.mRankingNoTextView.setBackground(context.getResources().getDrawable(R.drawable.oukan));
                 }else{
                      vh. mRankingNoTextView.setTextColor(Color.GREEN);
                 }
