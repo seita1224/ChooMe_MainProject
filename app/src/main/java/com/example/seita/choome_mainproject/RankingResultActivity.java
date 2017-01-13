@@ -71,4 +71,12 @@ public class RankingResultActivity extends AppCompatActivity {
         //ランキングデータ受信
         connectionHelper.reciveRanking(age,sex,scene,genre,hobbie,goodstype);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        connectionHelper = null;
+        cardRecyclerView = null;
+
+    }
 }

@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -50,7 +51,6 @@ public class HomeActivity extends Activity implements EasyPermissions.Permission
 
     GoogleAccountCredential mCredential;
     private TextView mOutputText;
-    private Button mCallApiButton;
     ProgressDialog mProgress;
 
     static final int REQUEST_ACCOUNT_PICKER = 1000;
@@ -70,55 +70,19 @@ public class HomeActivity extends Activity implements EasyPermissions.Permission
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_home);
 
-        // Activity のレイアウトを準備する
-        LinearLayout activityLayout = new LinearLayout(this);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        activityLayout.setLayoutParams(lp);
-        activityLayout.setOrientation(LinearLayout.VERTICAL);
-        activityLayout.setPadding(16, 16, 16, 16);
-
-        ViewGroup.LayoutParams tlp = new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        // Google Calendar API を呼び出す　Button を準備する
-        mCallApiButton = new Button(this);
-        mCallApiButton.setText(BUTTON_TEXT);
-        mCallApiButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCallApiButton.setEnabled(false);
-                mOutputText.setText("");
-                getResultsFromApi();
-                mCallApiButton.setEnabled(true);
-            }
-        });
-        activityLayout.addView(mCallApiButton);
-
-        // Google Calendar API の呼び出し結果を表示する　TextView を準備する
-        mOutputText = new TextView(this);
-        mOutputText.setLayoutParams(tlp);
-        mOutputText.setPadding(16, 16, 16, 16);
-        mOutputText.setVerticalScrollBarEnabled(true);
-        mOutputText.setMovementMethod(new ScrollingMovementMethod());
-        mOutputText.setText("Click the \'" + BUTTON_TEXT + "\' button to test the API.");
-        activityLayout.addView(mOutputText);
+        // Google Calendar API の呼び出しのための認証情報を初期化する
+        mCredential = GoogleAccountCredential.usingOAuth2(getApplicationContext(),Arrays.asList(SCOPES)).setBackOff(new ExponentialBackOff());
 
         // Google Calendar API の呼び出し中を表す PrgressDialog を準備する
         mProgress = new ProgressDialog(this);
         mProgress.setMessage("Calling Google Calendar API ...");
 
-        // ActivityにViewを設定する
-        setContentView(activityLayout);
-
-        // Google Calendar API の呼び出しのための認証情報を初期化する
-        mCredential = GoogleAccountCredential.usingOAuth2(
-                getApplicationContext(),
-                Arrays.asList(SCOPES)
-        ).setBackOff(new ExponentialBackOff());
+        //TextViewの初期化処理
+        mOutputText = (TextView) findViewById(R.id.anniversaryTextView);
+        mOutputText.setText("");
+        getResultsFromApi();
     }
 
 
@@ -181,9 +145,7 @@ public class HomeActivity extends Activity implements EasyPermissions.Permission
      *
      * @param connectionStatusCode Google Play Services が無効であることを示すコード
      */
-    void showGooglePlayServicesAvailabilityErrorDialog(
-            final int connectionStatusCode
-    ) {
+    void showGooglePlayServicesAvailabilityErrorDialog(final int connectionStatusCode) {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         Dialog dialog = apiAvailability.getErrorDialog(
                 HomeActivity.this,
@@ -208,17 +170,15 @@ public class HomeActivity extends Activity implements EasyPermissions.Permission
         // "GET_ACCOUNTS"パーミッションを取得済みか確認する
         if (EasyPermissions.hasPermissions(this, Manifest.permission.GET_ACCOUNTS)) {
             // SharedPreferencesから保存済みGoogleアカウントを取得する
-            String accountName = getPreferences(Context.MODE_PRIVATE)
-                    .getString(PREF_ACCOUNT_NAME, null);
+            String accountName = getPreferences(Context.MODE_PRIVATE).getString(PREF_ACCOUNT_NAME, null);
             if (accountName != null) {
                 mCredential.setSelectedAccountName(accountName);
+                Log.d("chooseAccount",mCredential.getSelectedAccountName());
                 getResultsFromApi();
             } else {
                 // Googleアカウントの選択を表示する
                 // GoogleAccountCredentialのアカウント選択画面を使用する
-                startActivityForResult(
-                        mCredential.newChooseAccountIntent(),
-                        REQUEST_ACCOUNT_PICKER);
+                startActivityForResult(mCredential.newChooseAccountIntent(),REQUEST_ACCOUNT_PICKER);
             }
         }
         else {
@@ -239,11 +199,7 @@ public class HomeActivity extends Activity implements EasyPermissions.Permission
      * @param data        呼び出し先のActivityでの処理結果のデータ
      */
     @Override
-    protected void onActivityResult(
-            int requestCode,
-            int resultCode,
-            Intent data
-    ) {
+    protected void onActivityResult(int requestCode,int resultCode,Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQUEST_GOOGLE_PLAY_SERVICES:
@@ -356,7 +312,7 @@ public class HomeActivity extends Activity implements EasyPermissions.Permission
         @Override
         protected String doInBackground(Void... params) {
             try {
-                return createCalendar();
+                return getAnniversaryDays();
             } catch (Exception e) {
                 mLastError = e;
                 cancel(true);
@@ -364,44 +320,8 @@ public class HomeActivity extends Activity implements EasyPermissions.Permission
             }
         }
 
-        /**
-         * 選択されたGoogleアカウントに対して、新規にカレンダーを追加する。
-         *
-         * @return 作成したカレンダーのID
-         * @throws IOException
-         */
-        private String createCalendar() throws IOException {
-            // 新規にカレンダーを作成する
-            com.google.api.services.calendar.model.Calendar calendar = new Calendar();
-            // カレンダーにタイトルを設定する
-            calendar.setSummary("CalendarTitle");
-            // カレンダーにタイムゾーンを設定する
-            calendar.setTimeZone("Asia/Tokyo");
-
-            // 作成したカレンダーをGoogleカレンダーに追加する
-            Calendar createdCalendar = mService.calendars().insert(calendar).execute();
-            String calendarId = createdCalendar.getId();
-
-            // カレンダー一覧から新規に作成したカレンダーのエントリを取得する
-            CalendarListEntry calendarListEntry = mService.calendarList().get(calendarId).execute();
-
-            // カレンダーのデフォルトの背景色を設定する
-            calendarListEntry.setBackgroundColor("#ff0000");
-
-            // カレンダーのデフォルトの背景色をGoogleカレンダーに反映させる
-            CalendarListEntry updatedCalendarListEntry =
-                    mService.calendarList()
-                            .update(calendarListEntry.getId(), calendarListEntry)
-                            .setColorRgbFormat(true)
-                            .execute();
-
-            // 新規に作成したカレンダーのIDを返却する
-            return calendarId;
-        }
-
         @Override
         protected void onPreExecute() {
-            mOutputText.setText("");
             mProgress.show();
         }
 
@@ -434,5 +354,9 @@ public class HomeActivity extends Activity implements EasyPermissions.Permission
                 mOutputText.setText("Request cancelled.");
             }
         }
+    }
+
+    private String getAnniversaryDays() {
+        return null;
     }
 }

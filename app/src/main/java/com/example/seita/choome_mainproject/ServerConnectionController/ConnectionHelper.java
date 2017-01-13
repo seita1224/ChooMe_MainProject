@@ -24,7 +24,6 @@ public class ConnectionHelper {
     private SendJsonAsyncTask send = null;  //データ送信用の非同期処理クラス
     private ReceiveJsonAsyncTask receive = null;    //データ受信用の非同期処理クラス
     private URL url = null; //送受信先のURL
-    private RankingJsonPase rankingJsonPase;
     private String connectionStatus;
     private int statusCode;
     private Context context;
@@ -86,7 +85,6 @@ public class ConnectionHelper {
                 }
             }
         });
-
         receive.execute();
         Log.d("ConnectionHelper","通信処理");
     }

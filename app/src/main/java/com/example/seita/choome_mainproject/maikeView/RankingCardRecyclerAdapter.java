@@ -81,7 +81,7 @@ public class RankingCardRecyclerAdapter extends RecyclerView.Adapter<RankingCard
                      vh. mRankingNoTextView.setTextColor(Color.GREEN);
                 }
 
-                Log.d("RankingCardAdapter", String.valueOf(ranking_no));
+//                Log.d("RankingCardAdapter", String.valueOf(ranking_no));
 
                 //商品名の設定
                 vh.mGoodsTextView.setText(goodsdatas.get(position).getGoods_name());
@@ -93,7 +93,7 @@ public class RankingCardRecyclerAdapter extends RecyclerView.Adapter<RankingCard
 
                 //商品画像の設定
                 vh.mGoodsImageView.setImageBitmap(goodsdatas.get(position).getPicture());
-                goodsImage = goodsdatas.get(position).getPicture();
+//                goodsImage = goodsdatas.get(position).getPicture();
 
                 //カードビュー自体をクリックしたときの処理
                 vh.mRankingResultRootLayout.setOnClickListener(new View.OnClickListener() {
