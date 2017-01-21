@@ -1,362 +1,124 @@
 package com.example.seita.choome_mainproject;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
-import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.ExponentialBackOff;
-
-import com.google.api.services.calendar.CalendarScopes;
-import com.google.api.client.util.DateTime;
-
-import com.google.api.services.calendar.model.*;
-
-import android.Manifest;
-import android.accounts.AccountManager;
 import android.app.Activity;
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.text.TextUtils;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 
-import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.EasyPermissions;
+import static com.example.seita.choome_mainproject.AnniversaryAddDelDeialogActivity.LOCAL_FILE;
 
-public class HomeActivity extends Activity implements EasyPermissions.PermissionCallbacks {
+public class HomeActivity extends Activity {
 
     GoogleAccountCredential mCredential;
     private TextView mOutputText;
-    ProgressDialog mProgress;
+    private Button mButton;
+    private ArrayList<String> anniversaryDays = new ArrayList<String>();
 
-    static final int REQUEST_ACCOUNT_PICKER = 1000;
-    static final int REQUEST_AUTHORIZATION = 1001;
-    static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
-    static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
 
-    private static final String BUTTON_TEXT = "Call Google Calendar API";
-    private static final String PREF_ACCOUNT_NAME = "accountName";
-    private static final String[] SCOPES = {CalendarScopes.CALENDAR};
 
-    /**
-     * Activityを作成する。
-     *
-     * @param savedInstanceState 以前に保存されたインスタンスのデータ
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        // Google Calendar API の呼び出しのための認証情報を初期化する
-        mCredential = GoogleAccountCredential.usingOAuth2(getApplicationContext(),Arrays.asList(SCOPES)).setBackOff(new ExponentialBackOff());
+        mOutputText = (TextView)findViewById(R.id.anniversaryTextView);
+        mButton = (Button)findViewById(R.id.button);
 
-        // Google Calendar API の呼び出し中を表す PrgressDialog を準備する
-        mProgress = new ProgressDialog(this);
-        mProgress.setMessage("Calling Google Calendar API ...");
-
-        //TextViewの初期化処理
-        mOutputText = (TextView) findViewById(R.id.anniversaryTextView);
-        mOutputText.setText("");
-        getResultsFromApi();
-    }
-
-
-    /**
-     * Google Calendar API の呼び出しの事前条件を確認し、条件を満たしていればAPIを呼び出す。
-     *
-     * 事前条件：
-     * - 有効な Google Play Services がインストールされていること
-     * - 有効な Google アカウントが選択されていること
-     * - 端末がインターネット接続可能であること
-     *
-     * 事前条件を満たしていない場合には、ユーザーに説明を表示する。
-     */
-    private void getResultsFromApi() {
-        if (!isGooglePlayServicesAvailable()) {
-            // Google Play Services が無効な場合
-            acquireGooglePlayServices();
-        }
-        else if (mCredential.getSelectedAccountName() == null) {
-            // 有効な Google アカウントが選択されていない場合
-            chooseAccount();
-        }
-        else if (!isDeviceOnline()) {
-            // 端末がインターネットに接続されていない場合
-            mOutputText.setText("No network connection available.");
-        }
-        else {
-            new MakeRequestTask(mCredential).execute();
-        }
-    }
-
-    /**
-     * 端末に Google Play Services がインストールされ、アップデートされているか否かを確認する。
-     *
-     * @return 利用可能な Google Play Services がインストールされ、アップデートされている場合にはtrueを、
-     * そうでない場合にはfalseを返す。
-     */
-    private boolean isGooglePlayServicesAvailable() {
-        GoogleApiAvailability apiAvailability =
-                GoogleApiAvailability.getInstance();
-        final int connectionStatusCode =
-                apiAvailability.isGooglePlayServicesAvailable(this);
-        return connectionStatusCode == ConnectionResult.SUCCESS;
-    }
-
-    /**
-     * ユーザーにダイアログを表示して、Google Play Services を利用可能な状態に設定するように促す。
-     * ただし、ユーザーが解決できないようなエラーの場合には、ダイアログを表示しない。
-     */
-    private void acquireGooglePlayServices() {
-        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
-        final int connectionStatusCode = apiAvailability.isGooglePlayServicesAvailable(this);
-        if (apiAvailability.isUserResolvableError(connectionStatusCode)) {
-            showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode);
-        }
-    }
-
-    /**
-     * 有効な Google Play Services が見つからないことをエラーダイアログで表示する。
-     *
-     * @param connectionStatusCode Google Play Services が無効であることを示すコード
-     */
-    void showGooglePlayServicesAvailabilityErrorDialog(final int connectionStatusCode) {
-        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
-        Dialog dialog = apiAvailability.getErrorDialog(
-                HomeActivity.this,
-                connectionStatusCode,
-                REQUEST_GOOGLE_PLAY_SERVICES
-        );
-        dialog.show();
-    }
-
-    /**
-     * Google　Calendar API の認証情報を使用するGoogleアカウントを設定する。
-     *
-     * 既にGoogleアカウント名が保存されていればそれを使用し、保存されていなければ、
-     * Googleアカウントの選択ダイアログを表示する。
-     *
-     * 認証情報を用いたGoogleアカウントの設定には、"GET_ACCOUNTS"パーミッションを
-     * 必要とするため、必要に応じてユーザーに"GET_ACCOUNTS"パーミッションを要求する
-     * ダイアログが表示する。
-     */
-    @AfterPermissionGranted(REQUEST_PERMISSION_GET_ACCOUNTS)
-    private void chooseAccount() {
-        // "GET_ACCOUNTS"パーミッションを取得済みか確認する
-        if (EasyPermissions.hasPermissions(this, Manifest.permission.GET_ACCOUNTS)) {
-            // SharedPreferencesから保存済みGoogleアカウントを取得する
-            String accountName = getPreferences(Context.MODE_PRIVATE).getString(PREF_ACCOUNT_NAME, null);
-            if (accountName != null) {
-                mCredential.setSelectedAccountName(accountName);
-                Log.d("chooseAccount",mCredential.getSelectedAccountName());
-                getResultsFromApi();
-            } else {
-                // Googleアカウントの選択を表示する
-                // GoogleAccountCredentialのアカウント選択画面を使用する
-                startActivityForResult(mCredential.newChooseAccountIntent(),REQUEST_ACCOUNT_PICKER);
-            }
-        }
-        else {
-            // ダイアログを表示して、ユーザーに"GET_ACCOUNTS"パーミッションを要求する
-            EasyPermissions.requestPermissions(
-                    this,
-                    "This app needs to access your Google account (via Contacts).",
-                    REQUEST_PERMISSION_GET_ACCOUNTS,
-                    Manifest.permission.GET_ACCOUNTS);
-        }
-    }
-
-    /**
-     * アカウント選択や認証など、呼び出し先のActivityから戻ってきた際に呼び出される。
-     *
-     * @param requestCode Activityの呼び出し時に指定したコード
-     * @param resultCode  呼び出し先のActivityでの処理結果を表すコード
-     * @param data        呼び出し先のActivityでの処理結果のデータ
-     */
-    @Override
-    protected void onActivityResult(int requestCode,int resultCode,Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case REQUEST_GOOGLE_PLAY_SERVICES:
-                if (resultCode != RESULT_OK) {
-                    mOutputText.setText(
-                            "This app requires Google Play Services. Please install " +
-                                    "Google Play Services on your device and relaunch this app.");
-                } else {
-                    getResultsFromApi();
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String str = "";
+                anniversaryDays = readFile(LOCAL_FILE);
+                for(String line:anniversaryDays){
+                    Log.d("HomeActivity",line);
+                    str += line + "\n";
                 }
-                break;
-
-            case REQUEST_ACCOUNT_PICKER:
-                if (resultCode == RESULT_OK && data != null && data.getExtras() != null) {
-                    String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-                    if (accountName != null) {
-                        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = settings.edit();
-                        editor.putString(PREF_ACCOUNT_NAME, accountName);
-                        editor.apply();
-                        mCredential.setSelectedAccountName(accountName);
-                        getResultsFromApi();
-                    }
-                }
-                break;
-
-            case REQUEST_AUTHORIZATION:
-                if (resultCode == RESULT_OK) {
-                    getResultsFromApi();
-                }
-                break;
-        }
-    }
-
-    /**
-     * Android 6.0 (API 23) 以降にて、実行時にパーミッションを要求した際の結果を受け取る。
-     *
-     * @param requestCode  requestPermissions(android.app.Activity, String, int, String[])
-     *                     を呼び出した際に渡した　request code
-     * @param permissions  要求したパーミッションの一覧
-     * @param grantResults 要求したパーミッションに対する承諾結果の配列
-     *                     PERMISSION_GRANTED または PERMISSION_DENIED　が格納される。
-     */
-    @Override
-    public void onRequestPermissionsResult(
-            int requestCode,
-            @NonNull String[] permissions,
-            @NonNull int[] grantResults
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    /**
-     * 要求したパーミッションがユーザーに承諾された際に、EasyPermissionsライブラリから呼び出される。
-     *
-     * @param requestCode 要求したパーミッションに関連した request code
-     * @param list        要求したパーミッションのリスト
-     */
-    @Override
-    public void onPermissionsGranted(int requestCode, List<String> list) {
-        // 何もしない
-    }
-
-    /**
-     * 要求したパーミッションがユーザーに拒否された際に、EasyPermissionsライブラリから呼び出される。
-     *
-     * @param requestCode 要求したパーミッションに関連した request code
-     * @param list        要求したパーミッションのリスト
-     */
-    @Override
-    public void onPermissionsDenied(int requestCode, List<String> list) {
-        // 何もしない
-    }
-
-    /**
-     * 現在、端末がネットワークに接続されているかを確認する。
-     *
-     * @return ネットワークに接続されている場合にはtrueを、そうでない場合にはfalseを返す。
-     */
-    private boolean isDeviceOnline() {
-        ConnectivityManager connMgr =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        return (networkInfo != null && networkInfo.isConnected());
-    }
-
-    /**
-     * 非同期で　Google Calendar API の呼び出しを行うクラス。
-     */
-    private class MakeRequestTask extends AsyncTask<Void, Void, String> {
-
-        private com.google.api.services.calendar.Calendar mService = null;
-        private Exception mLastError = null;
-
-        public MakeRequestTask(GoogleAccountCredential credential) {
-            HttpTransport transport = AndroidHttp.newCompatibleTransport();
-            JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-            mService = new com.google.api.services.calendar.Calendar
-                    .Builder(transport, jsonFactory, credential)
-                    .setApplicationName("Google Calendar API Android Quickstart")
-                    .build();
-        }
-
-        /**
-         * Google Calendar API を呼び出すバックグラウンド処理。
-         *
-         * @param params 引数は不要
-         */
-        @Override
-        protected String doInBackground(Void... params) {
-            try {
-                return getAnniversaryDays();
-            } catch (Exception e) {
-                mLastError = e;
-                cancel(true);
-                return null;
+                mOutputText.setText(str);
             }
-        }
+        });
 
-        @Override
-        protected void onPreExecute() {
-            mProgress.show();
-        }
-
-        @Override
-        protected void onPostExecute(String output) {
-            mProgress.hide();
-            if (output == null || output.isEmpty()) {
-                mOutputText.setText("No results returned.");
-            } else {
-                mOutputText.setText("Calendar created using the Google Calendar API: " + output);
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mProgress.hide();
-            if (mLastError != null) {
-                if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {
-                    showGooglePlayServicesAvailabilityErrorDialog(
-                            ((GooglePlayServicesAvailabilityIOException) mLastError)
-                                    .getConnectionStatusCode());
-                } else if (mLastError instanceof UserRecoverableAuthIOException) {
-                    startActivityForResult(
-                            ((UserRecoverableAuthIOException) mLastError).getIntent(),
-                            HomeActivity.REQUEST_AUTHORIZATION);
-                } else {
-                    mOutputText.setText("The following error occurred:\n" + mLastError.getMessage());
-                }
-            } else {
-                mOutputText.setText("Request cancelled.");
-            }
-        }
+        Intent intent = new Intent(getApplicationContext(), AnniversaryAddDelDeialogActivity.class);
+        startActivity(intent);
     }
 
-    private String getAnniversaryDays() {
-        return null;
+    //ファイルの読み込み
+    public ArrayList<String> readFile(String file) {
+        FileInputStream inputStream;
+        ArrayList<String> days = new ArrayList<String>();
+
+        try {
+            inputStream = openFileInput(file);
+            String lineBuffer = null;
+
+            BufferedReader reader= new BufferedReader(new InputStreamReader(inputStream,"UTF-8"));
+            while( (lineBuffer = reader.readLine()) != null ) {
+                Log.d("HomeActivity1",lineBuffer);
+                if(lineBuffer == "null"){
+                    continue;
+                }
+                days.add(lineBuffer);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return parseSortList(days);
+    }
+
+    //ファイルから文字列の解析とデータの整列と整列済みデータの読み込み
+    private ArrayList<String> parseSortList(ArrayList<String> days){
+        String daysName,date;
+        ArrayList<String> sortList = new ArrayList<String>();
+        int point1,point2;
+        for (String line:days){
+            //"["から"]"までの文字を抜き出す
+            point1 = line.indexOf("]");
+            point2 = line.lastIndexOf("[");
+            daysName = line.substring(1,point1);
+            date = line.substring(point2+1,line.length()-1);
+            Log.d("HomeActivity..",daysName+date);
+
+            //日付順に整列する準備
+            sortList.add(date + "," + daysName);
+        }
+        //整列
+        Collections.sort(sortList);
+        Log.d("HomeActivity",sortList.toString());
+
+        //出来上がったソートデータで上書き
+        BufferedWriter writer;
+        try {
+            writer = new BufferedWriter(new OutputStreamWriter(openFileOutput(LOCAL_FILE, MODE_PRIVATE), "UTF-8"));
+            //追記する
+            for(String data:sortList){
+                if(data != null) {
+                    String str[] = data.split(",");
+                    writer.append("[" + str[1] + "]" + "[" + str[0] + "]");
+                    writer.newLine();
+
+                }else{
+                    Toast.makeText(getApplicationContext(),"データを読み込めません",Toast.LENGTH_SHORT);
+                }
+            }
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sortList;
     }
 }

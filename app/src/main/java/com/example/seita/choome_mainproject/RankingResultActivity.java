@@ -77,6 +77,5 @@ public class RankingResultActivity extends AppCompatActivity {
         super.onDestroy();
         connectionHelper = null;
         cardRecyclerView = null;
-
     }
 }

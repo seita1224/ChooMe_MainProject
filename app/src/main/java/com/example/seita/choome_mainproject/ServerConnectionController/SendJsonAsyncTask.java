@@ -58,7 +58,7 @@ public class SendJsonAsyncTask extends AsyncTask<String,Void,Void> {
                     Log.d("SendJsonAs..._doIn...",str[i]);
                 }
 
-                //送信
+               //送信
                 out.flush();
                 Log.d("debug",out.toString());
 
