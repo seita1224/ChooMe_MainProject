@@ -1,10 +1,13 @@
 package com.example.seita.choome_mainproject;
 
+import com.example.seita.choome_mainproject.maikeView.CardRecyclerView;
+import com.example.seita.choome_mainproject.maikeView.HomeCardRecyclerAdapter;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,17 +28,22 @@ import static com.example.seita.choome_mainproject.AnniversaryAddDelDeialogActiv
 
 public class HomeActivity extends Activity {
 
-    GoogleAccountCredential mCredential;
     private TextView mOutputText;
-    private Button mButton;
+    private Button mButton; //テスト用ボタン
     private ArrayList<String> anniversaryDays = new ArrayList<String>();
 
-
+    //カードビュー
+    CardRecyclerView cardRecyclerView = null;
+    HomeCardRecyclerAdapter homeCardRecyclerAdapter = null;
+    LinearLayoutManager manager = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        //カードビューの準備
+
 
         mOutputText = (TextView)findViewById(R.id.anniversaryTextView);
         mButton = (Button)findViewById(R.id.button);
@@ -53,9 +61,10 @@ public class HomeActivity extends Activity {
             }
         });
 
-        Intent intent = new Intent(getApplicationContext(), AnniversaryAddDelDeialogActivity.class);
-        startActivity(intent);
     }
+
+
+    //--------------------------ファイル操作用メソッド--------------------------
 
     //ファイルの読み込み
     public ArrayList<String> readFile(String file) {
