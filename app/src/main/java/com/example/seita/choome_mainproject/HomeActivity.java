@@ -1,5 +1,6 @@
 package com.example.seita.choome_mainproject;
 
+import com.example.seita.choome_mainproject.AnniversaryDateControllre.DateChecker;
 import com.example.seita.choome_mainproject.maikeView.CardRecyclerView;
 import com.example.seita.choome_mainproject.maikeView.HomeCardRecyclerAdapter;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -53,14 +54,18 @@ public class HomeActivity extends Activity {
             public void onClick(View v) {
                 String str = "";
                 anniversaryDays = readFile(LOCAL_FILE);
-                for(String line:anniversaryDays){
-                    Log.d("HomeActivity",line);
-                    str += line + "\n";
+
+                Log.d("HomeActivity1", String.valueOf(DateChecker.checkDate(anniversaryDays)));
+                if (DateChecker.checkDate(anniversaryDays) >= 100) {
+                    mOutputText.setText("次の予定まで100日以上離れています");
+                }else{
+                    mOutputText.setText("次の予定は" + String.valueOf(DateChecker.checkDate(anniversaryDays)) + "日後です");
                 }
-                mOutputText.setText(str);
             }
         });
 
+        Intent intent = new Intent().setClass(getApplicationContext(),AnniversaryAddDelDeialogActivity.class);
+        startActivity(intent);
     }
 
 
