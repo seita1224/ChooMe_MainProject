@@ -12,6 +12,8 @@ import java.util.Date;
  */
 
 public class DateChecker {
+    public static int flg;
+
     public static int checkDate(ArrayList<String> list){
 
         long pastDays = 100;
@@ -24,20 +26,22 @@ public class DateChecker {
             Calendar nowDate = Calendar.getInstance();
             nowDate.set(nowDate.get(Calendar.YEAR), nowDate.get(Calendar.MONTH) + 1, nowDate.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
 
-            Log.d("DateChecker","date:" + nowDate);
+            Log.d("DateChecker","nowdate:" + nowDate.get(Calendar.YEAR) +  nowDate.get(Calendar.MONTH) + 1 + nowDate.get(Calendar.DAY_OF_MONTH));
 
             Calendar anniversaryDate = Calendar.getInstance();
-            anniversaryDate.set(Integer.parseInt(date.substring(0,4)),Integer.parseInt(date.substring(5,6)),Integer.parseInt(date.substring(7,8)),0,0,0);
+            anniversaryDate.set(Integer.parseInt(date.substring(0,4)),Integer.parseInt(date.substring(4,6)),Integer.parseInt(date.substring(6,8)),0,0,0);
 
-            Log.d("DateChecker","date:" + anniversaryDate);
+            Log.d("DateChecker","anniversaryDate:" + date.substring(0,4) + date.substring(4,6) + date.substring(6,8));
 
             long diffTime = nowDate.getTimeInMillis() - anniversaryDate.getTimeInMillis();
 
             Log.d("DateChecker","diffTime:" + diffTime);
 
-            if(pastDays > (diffTime / (1000 * 60 * 60 * 24))){
-                pastDays = diffTime / (1000 * 60 * 60 * 24);
-                Log.d("DateChecker","pastDays:" + pastDays);
+            if (diffTime >= 0){
+                if(pastDays > (diffTime / (1000 * 60 * 60 * 24))){
+                    pastDays = diffTime / (1000 * 60 * 60 * 24);
+                    Log.d("DateChecker","pastDays:" + pastDays);
+                }
             }
         }
         Log.d("DateChecker","date:" + pastDays);

@@ -52,12 +52,14 @@ public class HomeActivity extends Activity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String str = "";
                 anniversaryDays = readFile(LOCAL_FILE);
 
                 Log.d("HomeActivity1", String.valueOf(DateChecker.checkDate(anniversaryDays)));
+
                 if (DateChecker.checkDate(anniversaryDays) >= 100) {
                     mOutputText.setText("次の予定まで100日以上離れています");
+                }else if(DateChecker.checkDate(anniversaryDays) == 0){
+                    mOutputText.setText(anniversaryDays.get(DateChecker.flg) +"の日です");
                 }else{
                     mOutputText.setText("次の予定は" + String.valueOf(DateChecker.checkDate(anniversaryDays)) + "日後です");
                 }
